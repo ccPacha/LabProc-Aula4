@@ -31,6 +31,14 @@ WebServer server(80);
 // ===== Simple functions used to answer simple GET requests =====
 
 // This function is called when the sysInfo service was requested.
+int fatorial(n) {
+  int fat = 1;
+  for (int i = 1; i <= n; i++) {
+    fat * i;
+  }
+  return fat;
+}
+
 void calculator() {
   String op = server.arg("op");
   String a = server.arg("a");
@@ -42,8 +50,12 @@ void calculator() {
   int res = 0;
   if (op == "p") {
     res = an + bn;
-  } else {
+  } else if (op == "s") {
     res = an - bn;
+    else if (op == "m")
+    res = an * bn;
+    else
+    fatorial res = fatorial(an);
   } 
 
   digitalWrite(0, ((res & 0xF) >> 3) & 1);

@@ -30,6 +30,10 @@ static const char calcContent[] PROGMEM =
       <label for="+">+</label>
       <input type="radio" id="-" name="op" value="-">
       <label for="-">-</label>
+      <input type="radio" id="x" name="op" value="x">
+      <label for="x">x</label>
+      <input type="radio" id="!" name="op" value="!">
+      <label for="!">!</label>
     </fieldset>
     <input id="b" type="number"></input>
     <br/>
@@ -45,15 +49,26 @@ static const char calcContent[] PROGMEM =
     let res = document.getElementById('res');
     let overflow = document.getElementById('over');
 
+    function fac(n) {
+      if (n > 1) return n * fac(n - 1);
+      else return n;
+    }
+
     calc.addEventListener('click', () => {
-      let op = document.getElementById('+').checked ? "+" : "-"
+      let op = document.getElementById('+').checked ? "+" : 
+        document.getElementById('-').checked ? "-" :
+        document.getElementById('x').checked ? "x" : "!"
 
       if (op === "+")
-        res.textContent = +a.value + +b.value + "(+ Calculado no js!)"
-      else 
-        res.textContent = +a.value - +b.value + "(- Calculado no js!)"
+        res.textContent = +a.value + +b.value + " (+ Calculado no js!)"
+      else if (op === "-")
+        res.textContent = +a.value - +b.value + " (- Calculado no js!)"
+      else if (op === "x")
+        res.textContent = +a.value * +b.value + " (x Calculado no js!)"
+      else
+        res.textContent = fac(a.value) + " (! Calculado no js!)"
     
-      fetch(`/calc?op=${op === "+" ? "p" : "m"}&a=${+a.value}&b=${+b.value}`, { method: 'GET' }).then(response => {
+      fetch(`/calc?op=${op === "+" ? "p" : "-" ? "s" : "x" ? "m" : "f"}&a=${+a.value}&b=${+b.value}`, { method: 'GET' }).then(response => {
         response.json().then(json => {
           res.textContent = json.res
           if (json.overflow)
