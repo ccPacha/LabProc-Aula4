@@ -24,6 +24,8 @@
       <label for="x">x</label>
       <input type="radio" id="!" name="op" value="!">
       <label for="!">!</label>
+      <input type="radio" id="/" name="op" value="/">
+      <label for="!">/</label>
     </fieldset>
     <input id="b" type="number"></input>
     <br/>
@@ -31,6 +33,7 @@
     <br/>
     <p id="res"></p>
     <p id="over"></p>
+    <p id="deltaT"></p>
   </div>
   <script>
     let a = document.getElementById('a');
@@ -38,6 +41,8 @@
     let calc = document.getElementById('calc');
     let res = document.getElementById('res');
     let overflow = document.getElementById('over');
+    
+    let deltaT = document.getElementById('deltaT');
 
     function fac(n) {
       if (n > 1) return n * fac(n - 1);
@@ -47,7 +52,9 @@
     calc.addEventListener('click', () => {
       let op = document.getElementById('+').checked ? "+" : 
         document.getElementById('-').checked ? "-" :
-        document.getElementById('x').checked ? "x" : "!"
+        document.getElementById('x').checked ? "x" : 
+        document.getElementById('!').checked ? "!" :
+        "/"
 
       if (op === "+")
         res.textContent = +a.value + +b.value + " (+ Calculado no js!)"
@@ -55,16 +62,19 @@
         res.textContent = +a.value - +b.value + " (- Calculado no js!)"
       else if (op === "x")
         res.textContent = +a.value * +b.value + " (x Calculado no js!)"
-      else
+      else if (op === "!")
         res.textContent = fac(a.value) + " (! Calculado no js!)"
-    
-      fetch(`/calc?op=${op === "+" ? "p" : "-" ? "s" : "x" ? "m" : "f"}&a=${+a.value}&b=${+b.value}`, { method: 'GET' }).then(response => {
+      else 
+        res.textContent = +a.value / +b.value + " (/ Calculado no js!)"
+      fetch(`/calc?op=${op === "+" ? "p" : op === "-" ? "s" : op === "x" ? "m" : op === "!" ? "f" : "d" }&a=${+a.value}&b=${+b.value}`, { method: 'GET' }).then(response => {
         response.json().then(json => {
           res.textContent = json.res
           if (json.overflow)
             overflow.textContent = "Houve overflow";
           else 
             overflow.textContent = "";
+
+          deltaT.textContent = json.deltaT;
         })        
       });  
     

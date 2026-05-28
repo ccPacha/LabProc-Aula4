@@ -31,10 +31,10 @@ WebServer server(80);
 // ===== Simple functions used to answer simple GET requests =====
 
 // This function is called when the sysInfo service was requested.
-int fatorial(n) {
+int fatorial(int n) {
   int fat = 1;
   for (int i = 1; i <= n; i++) {
-    fat * i;
+    fat *= i;
   }
   return fat;
 }
@@ -47,23 +47,26 @@ void calculator() {
   int an = a.toInt();
   int bn = b.toInt();
 
+  unsigned long t0 = micros();
   int res = 0;
   if (op == "p") {
     res = an + bn;
   } else if (op == "s") {
     res = an - bn;
-    else if (op == "m")
+  } else if (op == "m") {
     res = an * bn;
-    else
-    fatorial res = fatorial(an);
-  } 
-
+  } else if (op == "f") {
+    res = fatorial(an);
+  } else {
+    res = an / bn;
+  }
+  unsigned long deltaT = micros() - t0;
   digitalWrite(0, ((res & 0xF) >> 3) & 1);
   digitalWrite(1, ((res & 0xF) >> 2) & 1);
   digitalWrite(2, ((res & 0xF) >> 1) & 1);
   digitalWrite(3, ((res & 0xF))      & 1);
 
-  server.send(200, "application/json", "{\"res\":" + String(res) + ",\"overflow\":" + (res > 7 || res < -8) + "}");
+  server.send(200, "application/json", "{\"res\":" + String(res) + ",\"overflow\":" + (res > 7 || res < -8) + ",\"deltaT\":" + deltaT + "}");
 }  // handleSysInfo()
 
 
